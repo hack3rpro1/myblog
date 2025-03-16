@@ -1,10 +1,27 @@
-{% extends 'base.html' %}
+{% extends 'blog/base.html' %}
+
+{% block title %}Register{% endblock %}
 
 {% block content %}
-<h2>Register for an account</h2>
-<form method="POST" action="{% url 'register' %}">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Register</button>
-</form>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h4>Register</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}  <!-- Render form fields automatically -->
+                        <button type="submit" class="btn btn-primary w-100">Register</button>
+                    </form>
+                    <div class="text-center mt-3">
+                        <a href="{% url 'login' %}">Already have an account? Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

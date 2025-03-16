@@ -85,6 +85,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = 'static/'
 
+
 # Media files settings
 MEDIA_URL = '/media/'  # URL path for media files
 MEDIA_ROOT = BASE_DIR / 'media'  # Directory on the filesystem where media files will be stored
