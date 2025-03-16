@@ -1,0 +1,20 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Profile - My Blog{% endblock %}
+
+{% block content %}
+    <h1>{{ profile.user.username }}'s Profile</h1>
+    <p>College: {{ profile.college }}</p>
+    <p>Department: {{ profile.department }}</p>
+
+    <form method="POST">
+        {% csrf_token %}
+        <label for="college">College:</label>
+        <input type="text" id="college" name="college" value="{{ profile.college }}">
+        
+        <label for="department">Department:</label>
+        <input type="text" id="department" name="department" value="{{ profile.department }}">
+        
+        <button type="submit">Update</button>
+    </form>
+{% endblock %}

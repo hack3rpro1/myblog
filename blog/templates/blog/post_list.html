@@ -1,0 +1,75 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Home - My Blog{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="mb-4">My Blog</h1>
+
+            {% if posts %}
+                {% for post in posts %}
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h2 class="card-title">
+                                <a href="{% url 'post_detail' post.pk %}" class="text-decoration-none">
+                                    {{ post.title }}
+                                </a>
+                            </h2>
+                            <p class="card-text text-muted">Published on {{ post.created_at|date:"F j, Y, g:i a" }}</p>
+
+                            {% if post.college %}
+                                <p class="card-text"><strong>College:</strong> {{ post.college }}</p>
+                            {% endif %}
+
+                            <!-- Display the image if it exists -->
+                            {% if post.image %}
+                                <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid mb-3">
+                            {% endif %}
+                            
+                            <p class="card-text">{{ post.content|truncatewords:30 }}</p>
+                            <a href="{% url 'post_detail' post.pk %}" class="btn btn-primary">Read More</a>
+                        </div>
+                    </div>
+                {% endfor %}
+
+                <!-- Pagination -->
+                <div class="pagination-container">
+                    <ul class="pagination">
+                        {% if posts.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1" aria-label="First">
+                                    <span aria-hidden="true">&laquo;&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ posts.previous_page_number }}" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        <li class="page-item disabled">
+                            <span class="page-link">Page {{ posts.number }} of {{ posts.paginator.num_pages }}</span>
+                        </li>
+
+                        {% if posts.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ posts.next_page_number }}" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ posts.paginator.num_pages }}" aria-label="Last">
+                                    <span aria-hidden="true">&raquo;&raquo;</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            {% else %}
+                <p class="text-muted">No posts yet. <a href="{% url 'post_create' %}">Create one!</a></p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
