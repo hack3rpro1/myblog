@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Post, Profile, Comment, College
-
+from django.core.exceptions import ValidationError
 class PostForm(forms.ModelForm):
     image = forms.ImageField(required=False)  # Allow optional image upload
 
@@ -17,6 +17,12 @@ class PostForm(forms.ModelForm):
         if self.user and not self.user.is_staff:
             self.fields['category'].widget = forms.HiddenInput()
             self.fields['college'].widget = forms.HiddenInput()
+
+    def clean_category(self):
+        # Ensure that only admins can set the category
+        if self.user and not self.user.is_staff:
+            raise ValidationError("You do not have permission to select a category.")
+        return self.cleaned_data.get('category')
 
 class ProfileForm(forms.ModelForm):
     class Meta:

@@ -1,20 +1,84 @@
+<head>
+    <style>
+        /* General styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header styles */
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 1rem 0;
+        }
+
+        header .logo img {
+            height: 50px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        header nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            gap: 1rem;
+        }
+
+        header nav ul li a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        header nav ul li a:hover {
+            color: #ffcc00;
+        }
+
+        /* Footer styles */
+        footer {
+            background-color: #343a40;
+            color: white;
+            padding: 1rem 0;
+            margin-top: 2rem;
+        }
+
+        footer a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        footer a:hover {
+            color: #ffcc00;
+        }
+    </style>
+</head>
 <header class="bg-primary text-white py-3">
-    <div class="container">
+    <div class="container d-flex align-items-center justify-content-between">
+        <!-- Add a logo -->
+        <div class="logo">
+            <img src="{% static 'images/logo.png' %}" alt="My Blog Logo" style="height: 50px;">
+        </div>
         <h1>Welcome to My Blog</h1>
         <nav>
             <ul class="nav">
-                <li class="nav-item"><a class="nav-link text-white" href="{% url 'post_list' %}">Home</a></li>
-
+                <li class="nav-item"><a class="nav-link text-white" href="{% url 'post_list' %}" style="transition: color 0.3s;">Home</a></li>
                 {% if user.is_authenticated %}
-                    <li class="nav-item"><a class="nav-link text-white" href="{% url 'logout' %}">Logout</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="{% url 'profile' %}">Profile</a></li>
-                    
+                    <li class="nav-item"><a class="nav-link text-white" href="{% url 'logout' %}" style="transition: color 0.3s;">Logout</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="{% url 'profile' %}" style="transition: color 0.3s;">Profile</a></li>
                     {% if user.is_staff or user.groups.all %}
-                        <li class="nav-item"><a class="nav-link text-white" href="{% url 'post_create' %}">Create Post</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="{% url 'post_create' %}" style="transition: color 0.3s;">Create Post</a></li>
                     {% endif %}
                 {% else %}
-                    <li class="nav-item"><a class="nav-link text-white" href="{% url 'login' %}">Login</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="{% url 'register' %}">Register</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="{% url 'login' %}" style="transition: color 0.3s;">Login</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="{% url 'register' %}" style="transition: color 0.3s;">Register</a></li>
                 {% endif %}
             </ul>
         </nav>
@@ -22,6 +86,16 @@
 </header>
 
 <div class="container">
-    {% block content %} 
+    {% block content %}
     {% endblock %}
 </div>
+
+<footer class="bg-dark text-white py-3 mt-4">
+    <div class="container text-center">
+        <p>&copy; 2025 Ufunguzi Portal. All rights reserved.</p>
+        <p>
+            <a href="#" class="text-white mx-2" style="text-decoration: none;">Privacy Policy</a> |
+            <a href="#" class="text-white mx-2" style="text-decoration: none;">Terms of Service</a>
+        </p>
+    </div>
+</footer>

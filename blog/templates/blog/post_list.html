@@ -3,10 +3,140 @@
 {% block title %}Home - My Blog{% endblock %}
 
 {% block content %}
+    <style>
+        /* Filter form styles */
+        #filter-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        #filter-form .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #filter-form label {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        #filter-form select {
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        /* Post card styles */
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title a {
+            color: #007bff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .card-title a:hover {
+            color: #0056b3;
+        }
+
+        .card-text {
+            margin-bottom: 1rem;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        /* Pagination styles */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .pagination {
+            list-style: none;
+            display: flex;
+            gap: 0.5rem;
+            padding: 0;
+        }
+
+        .pagination .page-item {
+            display: inline;
+        }
+
+        .pagination .page-link {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #007bff;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .pagination .page-link:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .pagination .page-item.disabled .page-link {
+            color: #6c757d;
+            pointer-events: none;
+        }
+    </style>
+
     <div class="row">
         <div class="col-md-12">
             <h1 class="mb-4">My Blog</h1>
 
+            <!-- Filter and Sort Form -->
+            <form method="GET" id="filter-form" class="mb-4 d-flex flex-wrap gap-2">
+                <div class="form-group">
+                    <label for="college">Filter by College:</label>
+                    <select name="college" id="college" onchange="document.getElementById('filter-form').submit();">
+                        <option value="">All Colleges</option>
+                        {% for college in colleges %}
+                            <option value="{{ college }}" {% if college == selected_college %}selected{% endif %}>
+                                {{ college }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Filter by Category:</label>
+                    <select name="category" id="category" class="form-control" onchange="document.getElementById('filter-form').submit();">
+                        <option value="">All Categories</option>
+                        {% for category in categories %}
+                            <option value="{{ category.name }}" {% if category.name == selected_category %}selected{% endif %}>
+                                {{ category.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="sort">Sort by:</label>
+                    <select name="sort" id="sort" class="form-control" onchange="document.getElementById('filter-form').submit();">
+                        <option value="newest" {% if sort_by == "newest" %}selected{% endif %}>Newest</option>
+                        <option value="oldest" {% if sort_by == "oldest" %}selected{% endif %}>Oldest</option>
+                    </select>
+                </div>
+            </form>
+
+            <!-- Posts List -->
             {% if posts %}
                 {% for post in posts %}
                     <div class="card mb-3">
@@ -18,15 +148,18 @@
                             </h2>
                             <p class="card-text text-muted">Published on {{ post.created_at|date:"F j, Y, g:i a" }}</p>
 
-                            {% if post.college %}
-                                <p class="card-text"><strong>College:</strong> {{ post.college }}</p>
+                            {% if post.author.profile.college %}
+                                <p class="card-text"><strong>College:</strong> {{ post.author.profile.college }}</p>
                             {% endif %}
 
-                            <!-- Display the image if it exists -->
+                            {% if post.category %}
+                                <p class="card-text"><strong>Category:</strong> {{ post.category.name }}</p>
+                            {% endif %}
+
                             {% if post.image %}
                                 <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid mb-3">
                             {% endif %}
-                            
+
                             <p class="card-text">{{ post.content|truncatewords:30 }}</p>
                             <a href="{% url 'post_detail' post.pk %}" class="btn btn-primary">Read More</a>
                         </div>
@@ -38,12 +171,12 @@
                     <ul class="pagination">
                         {% if posts.has_previous %}
                             <li class="page-item">
-                                <a class="page-link" href="?page=1" aria-label="First">
+                                <a class="page-link" href="?page=1&college={{ selected_college }}&category={{ selected_category }}&sort={{ sort_by }}" aria-label="First">
                                     <span aria-hidden="true">&laquo;&laquo;</span>
                                 </a>
                             </li>
                             <li class="page-item">
-                                <a class="page-link" href="?page={{ posts.previous_page_number }}" aria-label="Previous">
+                                <a class="page-link" href="?page={{ posts.previous_page_number }}&college={{ selected_college }}&category={{ selected_category }}&sort={{ sort_by }}" aria-label="Previous">
                                     <span aria-hidden="true">&laquo;</span>
                                 </a>
                             </li>
@@ -55,12 +188,12 @@
 
                         {% if posts.has_next %}
                             <li class="page-item">
-                                <a class="page-link" href="?page={{ posts.next_page_number }}" aria-label="Next">
+                                <a class="page-link" href="?page={{ posts.next_page_number }}&college={{ selected_college }}&category={{ selected_category }}&sort={{ sort_by }}" aria-label="Next">
                                     <span aria-hidden="true">&raquo;</span>
                                 </a>
                             </li>
                             <li class="page-item">
-                                <a class="page-link" href="?page={{ posts.paginator.num_pages }}" aria-label="Last">
+                                <a class="page-link" href="?page={{ posts.paginator.num_pages }}&college={{ selected_college }}&category={{ selected_category }}&sort={{ sort_by }}" aria-label="Last">
                                     <span aria-hidden="true">&raquo;&raquo;</span>
                                 </a>
                             </li>
@@ -68,7 +201,7 @@
                     </ul>
                 </div>
             {% else %}
-                <p class="text-muted">No posts yet. <a href="{% url 'post_create' %}">Create one!</a></p>
+                <p class="text-muted">No posts found. <a href="{% url 'post_create' %}">Create one!</a></p>
             {% endif %}
         </div>
     </div>
